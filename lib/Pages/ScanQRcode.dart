@@ -34,23 +34,82 @@ class _ScanQRcodeState extends State<ScanQRcode> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          buildQRview(context),
-          Positioned(
-            bottom: 10,
-            child: buidResult(),
-          ),
-        ],
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            buildQRview(context),
+            Positioned(bottom: 10, child: buildResult()),
+            Positioned(top: 10, child: buildControlButtons()),
+          ],
+        ),
       ),
     );
   }
 
-  Widget buidResult() => Text(
+  Widget buildControlButtons() => Container(
+        padding: EdgeInsets.symmetric(horizontal: 22),
+        decoration: BoxDecoration(
+          color: Colors.white24,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            IconButton(
+              onPressed: () async {
+                await controller?.toggleFlash();
+                setState(() {});
+              },
+              icon: FutureBuilder(
+                future: controller?.getFlashStatus(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.data != null) {
+                    return Icon(
+                      snapshot.data! ? Icons.flash_on : Icons.flash_off,
+                      color: Colors.white,
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                },
+              ),
+            ),
+            IconButton(
+              onPressed: () async {
+                await controller?.flipCamera();
+                setState(() {});
+              },
+              icon: FutureBuilder(
+                future: controller?.getCameraInfo(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.data != null) {
+                    return Icon(
+                      Icons.switch_camera,
+                      color: Colors.white,
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+
+  Widget buildResult() => Text(
         barcode != null ? '${barcode!.code}' : 'Scan a code!',
         maxLines: 3,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 22,
+        ),
       );
 
   Widget buildQRview(BuildContext context) => QRView(
