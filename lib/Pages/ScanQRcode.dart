@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:flutter/services.dart';
 
 class ScanQRcode extends StatefulWidget {
   const ScanQRcode({Key? key}) : super(key: key);
@@ -40,8 +41,8 @@ class _ScanQRcodeState extends State<ScanQRcode> {
           alignment: Alignment.center,
           children: [
             buildQRview(context),
-            Positioned(bottom: 10, child: buildResult()),
-            Positioned(top: 10, child: buildControlButtons()),
+            Positioned(bottom: 20, child: buildResult()),
+            Positioned(top: 16, child: buildControlButtons()),
           ],
         ),
       ),
@@ -49,7 +50,7 @@ class _ScanQRcodeState extends State<ScanQRcode> {
   }
 
   Widget buildControlButtons() => Container(
-        padding: EdgeInsets.symmetric(horizontal: 22),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white24,
           borderRadius: BorderRadius.circular(8),
@@ -103,14 +104,32 @@ class _ScanQRcodeState extends State<ScanQRcode> {
         ),
       );
 
-  Widget buildResult() => Text(
-        barcode != null ? '${barcode!.code}' : 'Scan a code!',
-        maxLines: 3,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 22,
+  Widget buildResult() {
+    String text = 'Scan a code!';
+
+    return InkWell(
+      onTap: () {
+        if (barcode!.code != null) {
+          Clipboard.setData(ClipboardData(text: "${barcode!.code}"));
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white24,
+          borderRadius: BorderRadius.circular(8),
         ),
-      );
+        child: Text(
+          (barcode != null ? '${barcode!.code}' : text),
+          maxLines: 3,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget buildQRview(BuildContext context) => QRView(
         key: qrKey,

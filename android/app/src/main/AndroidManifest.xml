@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.qr_code_app">
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
    <application
         android:label="qr_code_app"
         android:icon="@mipmap/ic_launcher">
